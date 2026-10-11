@@ -1,0 +1,125 @@
+-- [[ CONFIGURATION ]]
+local KEY_URL = "https://pastebin.com/raw/gpP1uCSK" -- Link containing: SUB-TO-YINETSU
+local MAIN_SCRIPT_URL = "https://pastebin.com/raw/d1xQMDzB" -- Your Full Yinetsu Script
+
+-- [[ UI SETUP ]]
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+-- Destroy existing Key UI if it exists
+if CoreGui:FindFirstChild("YinetsuKeySystem") then
+    CoreGui.YinetsuKeySystem:Destroy()
+end
+
+local KeyUI = Instance.new("ScreenGui", CoreGui)
+KeyUI.Name = "YinetsuKeySystem"
+
+local MainFrame = Instance.new("Frame", KeyUI)
+MainFrame.Size = UDim2.new(0, 350, 0, 220)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -110)
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Thickness = 2
+MainStroke.Color = Color3.fromRGB(0, 255, 255)
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Text = " YINETSU KEY SYSTEM"
+Title.TextColor3 = Color3.fromRGB(0, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Input Box
+local KeyInput = Instance.new("TextBox", MainFrame)
+KeyInput.Size = UDim2.new(0.85, 0, 0, 45)
+KeyInput.Position = UDim2.new(0.075, 0, 0.35, 0)
+KeyInput.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+KeyInput.PlaceholderText = "Enter Key..."
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.TextSize = 14
+Instance.new("UICorner", KeyInput)
+
+-- Submit Button
+local SubmitBtn = Instance.new("TextButton", MainFrame)
+SubmitBtn.Size = UDim2.new(0.4, 0, 0, 40)
+SubmitBtn.Position = UDim2.new(0.075, 0, 0.65, 0)
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
+SubmitBtn.Text = "CHECK KEY"
+SubmitBtn.TextColor3 = Color3.new(1, 1, 1)
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.TextSize = 12
+Instance.new("UICorner", SubmitBtn)
+
+-- Get Key Button
+local GetKeyBtn = Instance.new("TextButton", MainFrame)
+GetKeyBtn.Size = UDim2.new(0.4, 0, 0, 40)
+GetKeyBtn.Position = UDim2.new(0.525, 0, 0.65, 0)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(180, 100, 255)
+GetKeyBtn.Text = "GET KEY"
+GetKeyBtn.TextColor3 = Color3.new(1, 1, 1)
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.TextSize = 12
+Instance.new("UICorner", GetKeyBtn)
+
+-- Footer logic
+local Status = Instance.new("TextLabel", MainFrame)
+Status.Size = UDim2.new(1, 0, 0, 20)
+Status.Position = UDim2.new(0, 0, 0.9, 0)
+Status.BackgroundTransparency = 1
+Status.Text = "Status: Awaiting Input"
+Status.TextColor3 = Color3.fromRGB(150, 150, 150)
+Status.Font = Enum.Font.Gotham
+Status.TextSize = 10
+
+-- [[ RAINBOW LOOP ]]
+task.spawn(function()
+    local hue = 0
+    while task.wait() do
+        hue = (hue + 1/400) % 1
+        local rainbow = Color3.fromHSV(hue, 0.7, 1)
+        MainStroke.Color = rainbow
+        Title.TextColor3 = rainbow
+    end
+end)
+
+-- [[ VERIFICATION LOGIC ]]
+local function validate()
+    Status.Text = "Status: Verifying..."
+    Status.TextColor3 = Color3.fromRGB(255, 255, 0)
+    
+    local success, systemKey = pcall(function()
+        return game:HttpGet(KEY_URL):gsub("%s+", "")
+    end)
+    
+    if success and KeyInput.Text == systemKey then
+        Status.Text = "Status: Access Granted!"
+        Status.TextColor3 = Color3.fromRGB(0, 255, 0)
+        task.wait(1)
+        KeyUI:Destroy()
+        -- EXECUTES YOUR FULL SCRIPT
+        loadstring(game:HttpGet(MAIN_SCRIPT_URL))()
+    else
+        Status.Text = "Status: Invalid or Connection Error"
+        Status.TextColor3 = Color3.fromRGB(255, 0, 0)
+        task.wait(2)
+        Status.Text = "Status: Awaiting Input"
+        Status.TextColor3 = Color3.fromRGB(150, 150, 150)
+    end
+end
+
+SubmitBtn.MouseButton1Click:Connect(validate)
+
+GetKeyBtn.MouseButton1Click:Connect(function()
+    setclipboard("https://pastebin.com/gpP1uCSK")
+    GetKeyBtn.Text = "LINK COPIED!"
+    task.wait(2)
+    GetKeyBtn.Text = "GET KEY"
+end)
