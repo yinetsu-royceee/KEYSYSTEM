@@ -1,6 +1,6 @@
 -- [[ CONFIGURATION ]]
 local KEY_URL = "https://pastebin.com/raw/gpP1uCSK" -- Link containing: SUB-TO-YINETSU
-local MAIN_SCRIPT_URL = "https://pastebin.com/raw/d1xQMDzB" -- Your Full Yinetsu Script
+local MAIN_SCRIPT_URL = "https://raw.githubusercontent.com/yinetsu-royceee/YINETSU-SPY-PAID/refs/heads/main/YINETSU%20SPY%20PAID" -- Your Full Yinetsu Script
 
 -- [[ UI SETUP ]]
 local CoreGui = game:GetService("CoreGui")
